@@ -61,9 +61,9 @@ model product {
 
   orderDetails orderDetails[]
 
-  delivery delivery[]
-
   inventory inventory[]
+
+  deliveryDetails deliveryDetails[]
 }
 
 model customer {
@@ -84,9 +84,6 @@ model delivery {
   customerId      Int
   customer        customer @relation(fields: [customerId], references: [id])
 
-  productId       Int
-  product         product @relation(fields: [productId], references: [id])
-
   deliveryDetails deliveryDetails[]
 }
 
@@ -96,6 +93,9 @@ model deliveryDetails {
   shippingCost    Float
   OrderQuantity   Int
   ExpectedDate    DateTime
+
+  productId       Int
+  product         product @relation(fields: [productId], references: [id])
 
   deliveryId      Int
   delivery        delivery @relation(fields: [deliveryId], references: [id])
