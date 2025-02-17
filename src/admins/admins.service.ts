@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
-import { PrismaClient } from '@prisma/client';
 import { admin } from '@prisma/client';
-
+import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class AdminsService {
-  constructor(private readonly db: PrismaClient) { }
+  constructor(private readonly db: PrismaService) { }
 
   /**
    * Add a new admin user to the system.
