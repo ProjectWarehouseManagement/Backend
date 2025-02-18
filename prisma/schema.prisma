@@ -26,7 +26,6 @@ model order {
 model provider {
   id          Int       @id   @default(autoincrement())
   name        String    @unique
-  Address     String
   
   order order[]
 }
@@ -43,6 +42,9 @@ model orderDetails {
 
   productId       Int
   product         product @relation(fields: [productId], references: [id])
+
+  addressId       Int
+  address         address @relation(fields: [addressId], references: [id])
 
   warehouseId     Int
   warehouse       warehouse @relation(fields: [warehouseId], references: [id])
@@ -66,23 +68,12 @@ model product {
   deliveryDetails deliveryDetails[]
 }
 
-model customer {
-  id              Int       @id   @default(autoincrement())
-  name            String    @unique
-  email           String    @unique
-  phoneNumber     String
-  password        String
-  address         String
-
-  delivery delivery[]
-}
-
 model delivery {
   id              Int       @id   @default(autoincrement())
   orderDate       DateTime
 
-  customerId      Int
-  customer        customer @relation(fields: [customerId], references: [id])
+  userId      Int
+  user        user @relation(fields: [userId], references: [id])
 
   deliveryDetails deliveryDetails[]
 }
@@ -102,22 +93,17 @@ model deliveryDetails {
 
   warehouseId     Int
   warehouse       warehouse @relation(fields: [warehouseId], references: [id])
-}
 
-model admin {
-  id              Int       @id   @default(autoincrement())
-  name            String    @unique
-  email           String    @unique
-  phoneNumber     String
-  password        String
-
-  warehouseOnAdmin warehouseOnAdmin[]
+  addressId       Int
+  address         address @relation(fields: [addressId], references: [id])
 }
 
 model warehouse {
   id              Int       @id   @default(autoincrement())
-  address         String
   capacity        Boolean
+
+  addressId       Int
+  address         address @relation(fields: [addressId], references: [id])
 
   warehouseOnAdmin warehouseOnAdmin[]
 
@@ -145,8 +131,50 @@ model warehouseOnAdmin{
   warehouseId     Int
   warehouse       warehouse @relation(fields: [warehouseId], references: [id])
 
-  adminId         Int
-  admin           admin @relation(fields: [adminId], references: [id])
+  userId            Int
+  user              user @relation(fields: [userId], references: [id])
 
-  @@id([warehouseId, adminId])
+  @@id([warehouseId, userId])
+}
+
+model user {
+  id              Int       @id   @default(autoincrement())
+  email           String    @unique
+  password        String
+  role            Role      @default(CUSTOMER)
+
+  firstName       String?
+  lastName        String?
+  phoneNumber     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  address address[]
+  delivery delivery[]
+  warehouseOnAdmin warehouseOnAdmin[]
+}
+
+model address {
+  id          Int      @id @default(autoincrement())
+  street      String
+  city        String
+  state       String
+  postalCode  String
+  country     String
+
+  userId      Int?
+  user        user?     @relation(fields: [userId], references: [id])
+
+  // Relationships
+  delivery      deliveryDetails[]
+
+  warehouse warehouse[]
+
+  orderDetails orderDetails[]
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
 }
