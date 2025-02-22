@@ -153,6 +153,14 @@ model user {
   address address[]
   delivery delivery[]
   warehouseOnAdmin warehouseOnAdmin[]
+  Token token[]
+}
+
+model token {
+  token String      @id
+
+  userId            Int
+  user              user  @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model address {
