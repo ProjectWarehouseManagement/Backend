@@ -6,7 +6,7 @@ import { product } from '@prisma/client';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly db: PrismaService) { }
+  constructor(private readonly db: PrismaService) { }s
 
   /**
  * Add a new product to the system.

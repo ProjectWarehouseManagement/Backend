@@ -52,7 +52,8 @@ model orderDetails {
 
 model product {
   id              Int       @id   @default(autoincrement())
-  name            String
+  name            Strings
+  barcode         String   @unique
   unitPrice       Float
   width           Float
   height          Float
