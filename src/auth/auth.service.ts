@@ -2,36 +2,25 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { verify } from 'argon2';
-import { randomBytes } from 'node:crypto';
-import { token } from "@prisma/client";
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private db: PrismaService) { }
+  constructor(private db: PrismaService, private jwtService: JwtService) { }
 
-  async login(loginDto: LoginDto): Promise<token> {
+  async login(loginDto: LoginDto): Promise<{ access_token: string}> {
     const user = await this.db.user.findUniqueOrThrow({
       where: {
         email: loginDto.email
       }
     });
     if (await verify(user.password, loginDto.password)) {
-      return this.db.token.create({
-        data: {
-          token: randomBytes(32).toString('hex'),
-          user: { connect: { id: user.id } },
-        }
-      })
+      const payload = { sub: user.id, email: user.email, role: user.role };
+      return {
+        access_token: await this.jwtService.signAsync(payload)
+      };
     } else {
       throw new Error('Invalid pass');
     }
-  }
-
-  async logout(userId: number) {
-    const result = await this.db.token.deleteMany({
-      where: {
-        userId: userId
-      }
-    });
   }
 }

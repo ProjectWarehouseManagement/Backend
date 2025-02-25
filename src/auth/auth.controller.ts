@@ -1,11 +1,7 @@
-import { Body, Controller, Delete, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { Roles } from './roles.decorator';
-import { AuthGuard } from '@nestjs/passport';
-import { Role } from '@prisma/client';
-import { RolesGuard } from './roles.guard';
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -23,21 +19,5 @@ export class AuthController {
     } catch (e) {
       throw new UnauthorizedException('Invalid email or password');
     }
-  }
-
-  @Delete('logout')
-  @Roles(Role.ADMIN, Role.CUSTOMER)
-  @UseGuards(AuthGuard('bearer'), RolesGuard)
-  @ApiOperation({ summary: 'User logout' })
-  @ApiBearerAuth()
-  @ApiOkResponse({ description: 'Logged out successfully' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @UseGuards(AuthGuard('bearer'), RolesGuard)
-  async logout(@Req() req, @Res() res) {
-    const userId = req.user.id;
-    console.log(userId);
-    await this.authService.logout(+userId);
-
-    return res.send({ message: 'Logged out successfully' });
   }
 }

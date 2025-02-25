@@ -3,11 +3,11 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Role, user } from '@prisma/client';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { Roles } from '../auth/roles.decorator';
-import { RolesGuard } from 'src/auth/roles.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
 import { User } from './entity/User.entity';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @ApiTags('users')
 @Controller('users')
@@ -26,7 +26,7 @@ export class UsersController {
 
   @Get()
   @Roles(Role.ADMIN)
-  @UseGuards(AuthGuard('bearer'), RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, description: 'List of users returned successfully', type: [User] })
@@ -37,7 +37,7 @@ export class UsersController {
 
   @Get(':id')
   @Roles(Role.ADMIN)
-  @UseGuards(AuthGuard('bearer'), RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get one users' })
   @ApiResponse({ status: 200, description: 'user returned succesfully', type: User })
@@ -49,7 +49,7 @@ export class UsersController {
 
   @Patch(':id')
   @Roles(Role.ADMIN, Role.CUSTOMER)
-  @UseGuards(AuthGuard('bearer'), RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update user' })
   @ApiResponse({ status: 200, description: 'User updated successfully', type: User })
