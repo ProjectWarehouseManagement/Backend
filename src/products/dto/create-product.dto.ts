@@ -12,8 +12,15 @@ export class CreateProductDto implements Prisma.productCreateInput{
     name: string;
 
     @ApiProperty({
+        description: 'The barcode of the product.',
+        example: '5991234567890'
+    })
+    @IsString()
+    barcode: string;
+
+    @ApiProperty({
         description: 'The unit price of the product. (EUR)',
-        example: 650
+        example: 150
     })
     @IsInt()
     @Min(0)
@@ -29,7 +36,7 @@ export class CreateProductDto implements Prisma.productCreateInput{
 
     @ApiProperty({
         description: 'The height of the product\'s box. (mm)',
-        example: 250
+        example: 350
     })
     @IsNumber()
     @Min(0)
@@ -37,7 +44,7 @@ export class CreateProductDto implements Prisma.productCreateInput{
 
     @ApiProperty({
         description: 'The depth of the product\'s box. (mm)',
-        example: 250
+        example: 300
     })
     @IsNumber()
     @Min(0)
@@ -45,7 +52,7 @@ export class CreateProductDto implements Prisma.productCreateInput{
 
     @ApiProperty({
         description: 'The weight of the product. (g)',
-        example: 2500
+        example: 3000
     })
     @IsNumber()
     @Min(0)
@@ -57,4 +64,9 @@ export class CreateProductDto implements Prisma.productCreateInput{
     })
     @IsBoolean()
     Expiration: boolean;
+    @ApiProperty({
+        description: 'The product expiration date.',
+        example: '2025-02-14'
+    })
+    ExpirationDate?: Date;
 }

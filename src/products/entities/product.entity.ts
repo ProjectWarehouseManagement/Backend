@@ -9,8 +9,13 @@ export class Product implements product{
     })
     name: string;
     @ApiProperty({
+        description: 'The barcode of the product.',
+        example: '5991234567890'
+    })
+    barcode: string;
+    @ApiProperty({
         description: 'The unit price of the product. (EUR)',
-        example: 650
+        example: 150
     })
     unitPrice: number;
     @ApiProperty({
@@ -20,17 +25,17 @@ export class Product implements product{
     width: number;
     @ApiProperty({
         description: 'The height of the product\'s box. (mm)',
-        example: 250
+        example: 350
     })
     height: number;
     @ApiProperty({
         description: 'The depth of the product\'s box. (mm)',
-        example: 250
+        example: 300
     })
     depth: number;
     @ApiProperty({
         description: 'The weight of the product. (g)',
-        example: 2500
+        example: 3000
     })
     Weight: number;
     @ApiProperty({
