@@ -45,7 +45,7 @@ export class AuthController {
     name: 'Cookie',
     description: 'Must include access_token and refresh_token cookies',
   })
-  @Roles(Role.ADMIN, Role.CUSTOMER)
+  @Roles(Role.ADMIN, Role.USER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async logout(@Res() res: Response) {
     res.clearCookie('access_token');

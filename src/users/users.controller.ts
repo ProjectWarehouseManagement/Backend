@@ -52,7 +52,7 @@ export class UsersController {
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN, Role.CUSTOMER)
+  @Roles(Role.ADMIN, Role.USER)
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update user' })
@@ -65,7 +65,7 @@ export class UsersController {
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN, Role.CUSTOMER)
+  @Roles(Role.ADMIN, Role.USER)
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth()
   async addAddress(@Param('id') id: string, @Body() createAddressDto: CreateAddressDto): Promise<address> {

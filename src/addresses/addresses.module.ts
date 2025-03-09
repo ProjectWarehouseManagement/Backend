@@ -3,7 +3,7 @@ import { AddressesService } from './addresses.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Module({
-  providers: [AddressesService, PrismaService],
-  exports: [AddressesService]
+  providers: [AddressesService],
+  exports: [AddressesService, PrismaService]
 })
 export class AddressesModule {}

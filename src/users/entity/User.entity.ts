@@ -9,7 +9,7 @@ export class User implements Omit<user, 'password'>{
     @ApiProperty({ example: 'user@example.com', description: 'Email address of the user' })
     email: string;
 
-    @ApiProperty({ example: $Enums.Role.CUSTOMER, enum: $Enums.Role, description: 'Role of the user' })
+    @ApiProperty({ example: $Enums.Role.USER, enum: $Enums.Role, description: 'Role of the user' })
     role: $Enums.Role;
 
     @ApiProperty({ example: 'John', description: 'First name of the user' })

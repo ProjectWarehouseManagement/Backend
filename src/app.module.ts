@@ -7,7 +7,6 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { WarehousesModule } from './warehouses/warehouses.module';
 import { AddressesModule } from './addresses/addresses.module';
-import { AddressesModule } from './addresses/addresses.module';
 
 @Module({
   imports: [
