@@ -7,13 +7,14 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { WarehousesModule } from './warehouses/warehouses.module';
 import { AddressesModule } from './addresses/addresses.module';
+import { InventoriesModule } from './inventories/inventories.module';
 
 @Module({
   imports: [
   ConfigModule.forRoot({
     isGlobal: true,
   }),
-    AuthModule, ProductsModule, UsersModule, WarehousesModule, AddressesModule],
+    AuthModule, ProductsModule, UsersModule, WarehousesModule, AddressesModule, InventoriesModule],
   controllers: [AppController],
   providers: [AppService]
 })
