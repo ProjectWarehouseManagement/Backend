@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { IsBoolean } from "class-validator";
+import { Address } from "src/addresses/entities/address.entity";
 
 export class CreateWarehouseDto implements Prisma.warehouseCreateInput {
     @ApiProperty({
@@ -12,9 +13,9 @@ export class CreateWarehouseDto implements Prisma.warehouseCreateInput {
     capacity: boolean;
 
     @ApiProperty({
-        example: "Warehouse A",
-        description: "Warehouse's name",
-        format: "string",
+        example: Address,
+        description: "Warehouse's address",
+        format: "Address",
         })
     address: Prisma.addressCreateNestedOneWithoutWarehouseInput;
 }

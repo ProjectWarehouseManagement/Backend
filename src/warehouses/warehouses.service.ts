@@ -3,14 +3,13 @@ import { CreateWarehouseDto } from './dto/create-warehouse.dto';
 import { UpdateWarehouseDto } from './dto/update-warehouse.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { warehouse, address } from '@prisma/client';
-import { AddressesService } from 'src/addresses/addresses.service';
 import { CreateAddressDto } from 'src/addresses/dto/create-address.dto';
 import { UpdateAddressDto } from 'src/addresses/dto/update-address.dto';
 
 @Injectable()
 export class WarehousesService {
   constructor(private readonly db: PrismaService,
-    private readonly addressService: AddressesService
+    
   ) {}
   
   /**
@@ -23,7 +22,6 @@ export class WarehousesService {
     const warehouse = await this.db.warehouse.create({
       data: createWarehouseDto,
     });
-    await this.addressService.createWithWarehouse(addressDto, warehouse.id);
     return warehouse;
   }
 

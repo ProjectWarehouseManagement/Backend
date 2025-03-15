@@ -10,10 +10,13 @@ import { Roles } from 'src/auth/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UpdateAddressDto } from 'src/addresses/dto/update-address.dto';
+import { AddressesService } from 'src/addresses/addresses.service';
 
 @Controller('warehouses')
 export class WarehousesController {
-  constructor(private readonly warehousesService: WarehousesService) {}
+  constructor(private readonly warehousesService: WarehousesService,
+    private readonly addressService: AddressesService
+  ) {}
 
   @Post()
   @Roles(Role.ADMIN)
@@ -30,7 +33,9 @@ export class WarehousesController {
     description: 'Must include access_token cookie',
   })
   async create(@Body() createWarehouseDto: CreateWarehouseDto, @Body() addressDto: CreateAddressDto): Promise<warehouse> {
-    return this.warehousesService.create(createWarehouseDto, addressDto);
+    const warehouse = await this.warehousesService.create(createWarehouseDto, addressDto);
+    await this.addressService.createWithWarehouse(addressDto, warehouse.id);
+    return warehouse;
   }
 
   @Get()
@@ -89,7 +94,7 @@ export class WarehousesController {
   @ApiBearerAuth()
   @ApiOperation({ description: 'Update a warehouse address' })
   @ApiResponse({ status: 200, description: 'Warehouse address updated successfully', type: Warehouse })
-  @ApiResponse({ status: 404, description: 'Warehouse not found' })
+  @ApiResponse({ status: 404, description: 'Warehouse not found' }) 
   @ApiParam({ name: 'id', required: true, description: 'Warehouse id' })
   @ApiParam({ name: 'addressDto', required: true, description: 'Address data', type: UpdateAddressDto })
   @ApiUnauthorizedResponse({ description: 'No access token' })
