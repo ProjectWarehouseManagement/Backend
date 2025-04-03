@@ -37,8 +37,8 @@ model orderDetails {
   OrderQuantity   Int
   ExpectedDate    DateTime
 
-  orderId         Int
-  order           order @relation(fields: [orderId], references: [id])
+  orderId         Int?
+  order           order? @relation(fields: [orderId], references: [id])
 
   productId       Int
   product         product @relation(fields: [productId], references: [id])
@@ -142,7 +142,7 @@ model user {
   id              Int       @id   @default(autoincrement())
   email           String    @unique
   password        String
-  role            Role      @default(CUSTOMER)
+  role            Role      @default(USER)
 
   firstName       String?
   lastName        String?
@@ -168,7 +168,7 @@ model address {
   user        user?     @relation(fields: [userId], references: [id])
 
   // Relationships
-  delivery      deliveryDetails[]
+  deliveryDetails      deliveryDetails[]
 
   warehouse warehouse[]
 
@@ -177,5 +177,5 @@ model address {
 
 enum Role {
   ADMIN
-  CUSTOMER
+  USER
 }

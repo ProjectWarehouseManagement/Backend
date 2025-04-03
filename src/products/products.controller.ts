@@ -27,7 +27,7 @@ export class ProductsController {
   }
 
   @Get()
-  @Roles(Role.ADMIN, Role.CUSTOMER)
+  @Roles(Role.ADMIN, Role.USER)
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Retrieve all product' })
@@ -40,7 +40,7 @@ export class ProductsController {
 
 
   @Get(':id')
-  @Roles(Role.ADMIN, Role.CUSTOMER)
+  @Roles(Role.ADMIN, Role.USER)
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Retrieve a single product by ID' })
