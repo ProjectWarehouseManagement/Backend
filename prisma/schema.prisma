@@ -37,8 +37,8 @@ model orderDetails {
   OrderQuantity   Int
   ExpectedDate    DateTime
 
-  orderId         Int
-  order           order @relation(fields: [orderId], references: [id])
+  orderId         Int?
+  order           order? @relation(fields: [orderId], references: [id])
 
   productId       Int
   product         product @relation(fields: [productId], references: [id])
