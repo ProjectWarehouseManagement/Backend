@@ -5,17 +5,12 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { product, Role } from '@prisma/client';
-import { Roles } from 'src/auth/roles.decorator';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  @Roles(Role.ADMIN)
-  @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new product' })
   @ApiResponse({ status: 201, description: 'The product has been successfully created.', type: Product })
@@ -27,8 +22,6 @@ export class ProductsController {
   }
 
   @Get()
-  @Roles(Role.ADMIN, Role.USER)
-  @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Retrieve all product' })
   @ApiResponse({ status: 200, description: 'The products have been successfully retrieved.', type: [Product] })
@@ -40,8 +33,6 @@ export class ProductsController {
 
 
   @Get(':id')
-  @Roles(Role.ADMIN, Role.USER)
-  @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Retrieve a single product by ID' })
   @ApiResponse({ status: 200, description: 'Successfully retrieved the product.', type: Product })
@@ -53,8 +44,6 @@ export class ProductsController {
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN)
-  @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a product' })
   @ApiResponse({ status: 200, description: 'The product has been successfully updated.', type: Product })
@@ -68,9 +57,6 @@ export class ProductsController {
 
   @Delete(':id')
   @HttpCode(204)
-  @Roles(Role.ADMIN)
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Remove a product' })
   @ApiResponse({ status: 204, description: 'The product has been successfully removed.' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })

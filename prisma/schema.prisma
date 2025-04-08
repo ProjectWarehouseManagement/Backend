@@ -26,6 +26,8 @@ model order {
 model provider {
   id          Int       @id   @default(autoincrement())
   name        String    @unique
+  email       String    @unique
+  phone       String
   
   order order[]
 }

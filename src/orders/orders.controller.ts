@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { CreateOrderDetailsDto, CreateOrderDto, CreateProviderDto } from './dto/create-order.dto';
+import { CreateOrderDetailsDto, CreateProviderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Controller('orders')
@@ -16,7 +16,6 @@ export class OrdersController {
   createProvider(@Body() createProviderDto: CreateProviderDto) {
     return this.ordersService.createProvider(createProviderDto);
   }
-
 
   @Get()
   findAll() {

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ApiBody, ApiHeader, ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
@@ -31,8 +31,8 @@ export class AuthController {
     }
     const { access_token, refresh_token } = await this.authService.generateTokens(payload);
 
-    res.cookie('access_token', access_token, { httpOnly: true });
-    res.cookie('refresh_token', refresh_token, { httpOnly: true });
+    res.cookie('access_token', access_token);
+    res.cookie('refresh_token', refresh_token);
     return res.send({ message: 'Logged in successfully' });
   }
 
@@ -48,6 +48,7 @@ export class AuthController {
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async logout(@Res() res: Response) {
+    console.log(res)
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
     return res.send({ message: 'Logged out successfully' });
@@ -78,8 +79,28 @@ export class AuthController {
     delete payload.exp;
 
     const { access_token, refresh_token: new_refresh_token } = await this.authService.generateTokens(payload);
-    res.cookie('access_token', access_token, { httpOnly: true });
-    res.cookie('refresh_token', new_refresh_token, { httpOnly: true });
+    res.cookie('access_token', access_token);
+    res.cookie('refresh_token', new_refresh_token);
     return res.send({ message: 'Tokens refreshed' });
+  }
+
+  @Post('check')
+  async check(@Req() req: Request, @Res() res: Response) {
+    const access_token = req.cookies?.access_token;
+    console.log(access_token);
+    if (!access_token) {
+      throw new UnauthorizedException('No access token');
+    }
+
+    let payload;
+    try {
+      payload = await this.authService.validateToken(access_token);
+    } catch (e) {
+      throw new UnauthorizedException('Invalid access token');
+    }
+    delete payload.iat;
+    delete payload.exp;
+
+    return res.send({ message: 'Access token is valid', user: payload });
   }
 }
