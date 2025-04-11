@@ -14,6 +14,19 @@ export class OrdersService {
     });
   }
 
+  async create(createOrderDto: CreateOrderDto): Promise<order> {
+    return this.db.order.create({
+      data: {
+        orderDate: new Date(createOrderDto.orderDate),
+        provider: { connect: { id: createOrderDto.providerId } },
+      },
+      include: {
+        provider: true,
+        orderDetails: true,
+      },
+    });
+  }
+
   async createOrderDetails(createOrderDetailsDto: CreateOrderDetailsDto): Promise<orderDetails> {
     return this.db.orderDetails.create({
       data: {
@@ -40,6 +53,10 @@ export class OrdersService {
         orderDetails: true,
       },
     });
+  }
+
+  async findAllProvider(): Promise<provider[]> {
+    return this.db.provider.findMany();
   }
 
   async findOne(id: number): Promise<order> {

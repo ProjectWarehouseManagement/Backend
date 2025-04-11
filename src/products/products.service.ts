@@ -89,6 +89,14 @@ export class ProductsService {
     });
   }
 
+  async findByBarcode(barcode: string): Promise<product> {
+    return this.db.product.findUniqueOrThrow({
+      where: {
+        barcode: barcode
+      }
+    });
+  }
+
 
   /**
  * Update an existing product in the system.

@@ -22,7 +22,6 @@ export class AuthController {
     description: 'Stores access_token and refresh_token in cookies',
   })
   async login(@Body() loginDto: LoginDto, @Res() res: Response) {
-    const { email, password } = loginDto;
     let payload;
     try {
       payload = await this.authService.login(loginDto);
@@ -31,8 +30,8 @@ export class AuthController {
     }
     const { access_token, refresh_token } = await this.authService.generateTokens(payload);
 
-    res.cookie('access_token', access_token);
-    res.cookie('refresh_token', refresh_token);
+    res.cookie('access_token', access_token, { httpOnly: true, secure: true, sameSite: 'lax' });
+    res.cookie('refresh_token', refresh_token, { httpOnly: true, secure: true, sameSite: 'lax' });
     return res.send({ message: 'Logged in successfully' });
   }
 
@@ -48,7 +47,6 @@ export class AuthController {
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async logout(@Res() res: Response) {
-    console.log(res)
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
     return res.send({ message: 'Logged out successfully' });
@@ -87,7 +85,6 @@ export class AuthController {
   @Post('check')
   async check(@Req() req: Request, @Res() res: Response) {
     const access_token = req.cookies?.access_token;
-    console.log(access_token);
     if (!access_token) {
       throw new UnauthorizedException('No access token');
     }

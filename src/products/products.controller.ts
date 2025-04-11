@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, UseGuards, Query, NotFoundException } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { product, Role } from '@prisma/client';
 
 @Controller('products')
@@ -30,7 +30,18 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
-
+  @Get('byBarcode')
+  @ApiOperation({ summary: 'Find products by barcode' })
+  @ApiQuery({ name: 'barcode', required: true, type: String })
+  @ApiResponse({ status: 200, description: 'Products found' })
+  @ApiResponse({ status: 404, description: 'No products found' })
+  async findByBarcode(@Query('barcode') barcode: string) {
+    const products = await this.productsService.findByBarcode(barcode);
+    if (!products) {
+      throw new NotFoundException('No product found with the given barcode.');
+    }
+    return products;
+  }
 
   @Get(':id')
   @ApiBearerAuth()

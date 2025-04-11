@@ -16,7 +16,7 @@ import { DeliveriesModule } from './deliveries/deliveries.module';
   ConfigModule.forRoot({
     isGlobal: true,
   }),
-    AuthModule, ProductsModule, UsersModule, WarehousesModule, AddressesModule, InventoriesModule, OrdersModule, DeliveriesModule],
+    AuthModule, ProductsModule, UsersModule, WarehousesModule, AddressesModule, InventoriesModule, OrdersModule, DeliveriesModule, AddressesModule],
   controllers: [AppController],
   providers: [AppService]
 })

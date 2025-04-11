@@ -91,6 +91,8 @@ async function main() {
     const provider = await prisma.provider.create({
       data: {
         name: faker.company.name(),
+        email: faker.internet.email(),
+        phone: faker.phone.number(),
       },
     });
     providers.push(provider);
