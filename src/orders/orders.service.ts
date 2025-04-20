@@ -50,7 +50,13 @@ export class OrdersService {
     return this.db.order.findMany({
       include: {
         provider: true,
-        orderDetails: true,
+        orderDetails: {
+          include: {
+            product: true,
+            address: true,
+            warehouse: true
+          }
+        }
       },
     });
   }
@@ -87,6 +93,7 @@ export class OrdersService {
         },
       });
     } catch (error) {
+      console.log(error)
       throw new NotFoundException(`Order with ID ${id} not found.`);
     }
   }

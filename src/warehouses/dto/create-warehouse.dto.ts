@@ -13,6 +13,13 @@ export class CreateWarehouseDto implements Prisma.warehouseCreateInput {
     capacity: boolean;
 
     @ApiProperty({
+        example: "A",
+        description: "Name of the warehouse",
+        format: "string",
+    })
+    name: string;
+
+    @ApiProperty({
         example: Address,
         description: "Warehouse's address",
         format: "Address",
