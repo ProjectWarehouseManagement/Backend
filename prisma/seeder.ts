@@ -1,5 +1,6 @@
-import { address, delivery, order, PrismaClient, product, provider, user, warehouse, warehouseOnAdmin } from '@prisma/client';
+import { address, delivery, order, PrismaClient, product, provider, Role, user, warehouse, warehouseOnAdmin } from '@prisma/client';
 import { faker } from '@faker-js/faker';
+import { hash } from 'argon2';
 
 const prisma = new PrismaClient();
 
@@ -10,7 +11,7 @@ async function main() {
     const user = await prisma.user.create({
       data: {
         email: faker.internet.email(),
-        password: faker.internet.password(),
+        password: await hash("password"),
         role: faker.helpers.arrayElement(['ADMIN', 'USER']),
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
@@ -20,6 +21,14 @@ async function main() {
     users.push(user);
     console.log(`Created user with id: ${user.id}`);
   }
+
+  await prisma.user.create({
+    data: {
+      email: "admin@admin.com",
+      password: await hash("admin"),
+      role: Role.ADMIN
+    }
+  })
 
   // Seed Addresses
   const addresses: address[] = [];
@@ -44,6 +53,7 @@ async function main() {
     const warehouse = await prisma.warehouse.create({
       data: {
         capacity: faker.datatype.boolean(),
+        name: faker.string.alpha(),
         addressId: faker.helpers.arrayElement(addresses).id,
       },
     });
@@ -91,6 +101,8 @@ async function main() {
     const provider = await prisma.provider.create({
       data: {
         name: faker.company.name(),
+        email: faker.internet.email(),
+        phone: faker.phone.number(),
       },
     });
     providers.push(provider);

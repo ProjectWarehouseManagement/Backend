@@ -1,7 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { DeliveriesService } from './deliveries.service';
 import { CreateDeliveryDto, CreateDeliveryDetailsDto } from './dto/create-delivery.dto';
 import { UpdateDeliveryDto } from './dto/update-delivery.dto';
+import { Roles } from 'src/auth/roles.decorator';
+import { Role } from '@prisma/client';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller('deliveries')
 export class DeliveriesController {
@@ -13,6 +17,8 @@ export class DeliveriesController {
    * @returns The created delivery.
    */
   @Post()
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(AuthGuard, RolesGuard)
   createDelivery(@Body() createDeliveryDto: CreateDeliveryDto) {
     return this.deliveriesService.createDelivery(createDeliveryDto);
   }
@@ -23,6 +29,8 @@ export class DeliveriesController {
    * @returns The created delivery details.
    */
   @Post('details')
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(AuthGuard, RolesGuard)
   createDeliveryDetails(@Body() createDeliveryDetailsDto: CreateDeliveryDetailsDto) {
     return this.deliveriesService.createDeliveryDetails(createDeliveryDetailsDto);
   }
@@ -32,6 +40,8 @@ export class DeliveriesController {
    * @returns A list of all deliveries.
    */
   @Get()
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
   findAll() {
     return this.deliveriesService.findAll();
   }
@@ -42,6 +52,8 @@ export class DeliveriesController {
    * @returns The found delivery.
    */
   @Get(':id')
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(AuthGuard, RolesGuard)
   findOne(@Param('id') id: string) {
     return this.deliveriesService.findOne(+id);
   }
@@ -53,6 +65,8 @@ export class DeliveriesController {
    * @returns The updated delivery.
    */
   @Patch(':id')
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(AuthGuard, RolesGuard)
   update(@Param('id') id: string, @Body() updateDeliveryDto: UpdateDeliveryDto) {
     return this.deliveriesService.update(+id, updateDeliveryDto);
   }
@@ -63,6 +77,8 @@ export class DeliveriesController {
    * @returns The deleted delivery.
    */
   @Delete(':id')
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
   remove(@Param('id') id: string) {
     return this.deliveriesService.remove(+id);
   }

@@ -26,6 +26,8 @@ model order {
 model provider {
   id          Int       @id   @default(autoincrement())
   name        String    @unique
+  email       String    @unique
+  phone       String
   
   order order[]
 }
@@ -102,6 +104,7 @@ model deliveryDetails {
 model warehouse {
   id              Int       @id   @default(autoincrement())
   capacity        Boolean
+  name            String
 
   addressId       Int
   address         address @relation(fields: [addressId], references: [id])

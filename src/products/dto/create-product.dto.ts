@@ -22,7 +22,6 @@ export class CreateProductDto implements Prisma.productCreateInput{
         description: 'The unit price of the product. (EUR)',
         example: 150
     })
-    @IsInt()
     @Min(0)
     unitPrice: number;
 
@@ -30,7 +29,6 @@ export class CreateProductDto implements Prisma.productCreateInput{
         description: 'The width of the product\'s box. (mm)',
         example: 250
     })
-    @IsNumber()
     @Min(0)
     width: number;
 
@@ -38,7 +36,6 @@ export class CreateProductDto implements Prisma.productCreateInput{
         description: 'The height of the product\'s box. (mm)',
         example: 350
     })
-    @IsNumber()
     @Min(0)
     height: number;
 
@@ -46,7 +43,6 @@ export class CreateProductDto implements Prisma.productCreateInput{
         description: 'The depth of the product\'s box. (mm)',
         example: 300
     })
-    @IsNumber()
     @Min(0)
     depth: number;
 
@@ -54,7 +50,6 @@ export class CreateProductDto implements Prisma.productCreateInput{
         description: 'The weight of the product. (g)',
         example: 3000
     })
-    @IsNumber()
     @Min(0)
     Weight: number;
 

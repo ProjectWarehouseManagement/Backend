@@ -97,7 +97,7 @@ export class CreateProviderDto implements Prisma.providerCreateInput {
     phone: string;
 }
 
-export class CreateOrderDto implements Prisma.orderCreateInput {
+export class CreateOrderDto {
     @ApiProperty({
         description: "Date of the order",
         example: "2023-10-01",
@@ -106,5 +106,5 @@ export class CreateOrderDto implements Prisma.orderCreateInput {
     orderDate: string | Date;
 
     @ApiProperty()
-    provider: Prisma.providerCreateNestedOneWithoutOrderInput;
+    providerId:number
 }

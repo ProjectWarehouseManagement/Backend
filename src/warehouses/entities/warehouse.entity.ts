@@ -9,6 +9,9 @@ export class Warehouse implements warehouse {
     @ApiProperty({ example: 100, description: 'Capacity of the warehouse' })
     capacity: boolean;
 
+    @ApiProperty({ example: "A", description: "Name of the warehouse"})
+    name: string;
+
     @ApiProperty({ example: 1, description: 'Address id of the warehouse' })
     addressId: number;
 }

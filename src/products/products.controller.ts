@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, UseGuards, Query, NotFoundException } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { product, Role } from '@prisma/client';
 import { Roles } from 'src/auth/roles.decorator';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -14,7 +14,7 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.USER)
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new product' })
@@ -37,7 +37,20 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
-
+  @Get('byBarcode')
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(AuthGuard, RolesGuard)
+  @ApiOperation({ summary: 'Find products by barcode' })
+  @ApiQuery({ name: 'barcode', required: true, type: String })
+  @ApiResponse({ status: 200, description: 'Products found' })
+  @ApiResponse({ status: 404, description: 'No products found' })
+  async findByBarcode(@Query('barcode') barcode: string) {
+    const products = await this.productsService.findByBarcode(barcode);
+    if (!products) {
+      throw new NotFoundException('No product found with the given barcode.');
+    }
+    return products;
+  }
 
   @Get(':id')
   @Roles(Role.ADMIN, Role.USER)
@@ -67,10 +80,9 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
   @Roles(Role.ADMIN)
-  @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
+  @HttpCode(204)
   @ApiOperation({ summary: 'Remove a product' })
   @ApiResponse({ status: 204, description: 'The product has been successfully removed.' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })

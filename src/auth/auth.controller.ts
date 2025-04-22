@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ApiBody, ApiHeader, ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
@@ -7,6 +7,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Roles } from './roles.decorator';
 import { Role } from '@prisma/client';
 import { RolesGuard } from './guards/roles.guard';
+import { AuthGuard } from './guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -22,7 +23,6 @@ export class AuthController {
     description: 'Stores access_token and refresh_token in cookies',
   })
   async login(@Body() loginDto: LoginDto, @Res() res: Response) {
-    const { email, password } = loginDto;
     let payload;
     try {
       payload = await this.authService.login(loginDto);
@@ -31,8 +31,8 @@ export class AuthController {
     }
     const { access_token, refresh_token } = await this.authService.generateTokens(payload);
 
-    res.cookie('access_token', access_token, { httpOnly: true });
-    res.cookie('refresh_token', refresh_token, { httpOnly: true });
+    res.cookie('access_token', access_token, { httpOnly: true, secure: true, sameSite: 'lax' });
+    res.cookie('refresh_token', refresh_token, { httpOnly: true, secure: true, sameSite: 'lax' });
     return res.send({ message: 'Logged in successfully' });
   }
 
@@ -54,6 +54,8 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Refresh access token using refresh token cookie' })
   @ApiResponse({ status: 200, description: 'Token refreshed successfully' })
   @ApiResponse({ status: 401, description: 'Invalid refresh token' })
@@ -78,8 +80,27 @@ export class AuthController {
     delete payload.exp;
 
     const { access_token, refresh_token: new_refresh_token } = await this.authService.generateTokens(payload);
-    res.cookie('access_token', access_token, { httpOnly: true });
-    res.cookie('refresh_token', new_refresh_token, { httpOnly: true });
+    res.cookie('access_token', access_token);
+    res.cookie('refresh_token', new_refresh_token);
     return res.send({ message: 'Tokens refreshed' });
+  }
+
+  @Post('check')
+  async check(@Req() req: Request, @Res() res: Response) {
+    const access_token = req.cookies?.access_token;
+    if (!access_token) {
+      throw new UnauthorizedException('No access token');
+    }
+
+    let payload;
+    try {
+      payload = await this.authService.validateToken(access_token);
+    } catch (e) {
+      throw new UnauthorizedException('Invalid access token');
+    }
+    delete payload.iat;
+    delete payload.exp;
+
+    return res.send({ message: 'Access token is valid', user: payload });
   }
 }

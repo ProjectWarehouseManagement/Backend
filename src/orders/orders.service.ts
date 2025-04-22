@@ -14,6 +14,19 @@ export class OrdersService {
     });
   }
 
+  async create(createOrderDto: CreateOrderDto): Promise<order> {
+    return this.db.order.create({
+      data: {
+        orderDate: new Date(createOrderDto.orderDate),
+        provider: { connect: { id: createOrderDto.providerId } },
+      },
+      include: {
+        provider: true,
+        orderDetails: true,
+      },
+    });
+  }
+
   async createOrderDetails(createOrderDetailsDto: CreateOrderDetailsDto): Promise<orderDetails> {
     return this.db.orderDetails.create({
       data: {
@@ -37,9 +50,19 @@ export class OrdersService {
     return this.db.order.findMany({
       include: {
         provider: true,
-        orderDetails: true,
+        orderDetails: {
+          include: {
+            product: true,
+            address: true,
+            warehouse: true
+          }
+        }
       },
     });
+  }
+
+  async findAllProvider(): Promise<provider[]> {
+    return this.db.provider.findMany();
   }
 
   async findOne(id: number): Promise<order> {
@@ -70,6 +93,7 @@ export class OrdersService {
         },
       });
     } catch (error) {
+      console.log(error)
       throw new NotFoundException(`Order with ID ${id} not found.`);
     }
   }
