@@ -41,7 +41,7 @@ export class OrdersController {
   }
 
   @Get('provider')
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.USER)
   @UseGuards(AuthGuard, RolesGuard)
   findAllProvider() {
     return this.ordersService.findAllProvider();
