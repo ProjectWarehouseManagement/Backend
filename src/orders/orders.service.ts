@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderDetailsDto, CreateOrderDto, CreateProviderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
+import { UpdateOrderDetailsDto, UpdateOrderDto, UpdateProviderDto } from './dto/update-order.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { order, orderDetails, provider } from '@prisma/client';
 
@@ -95,6 +95,32 @@ export class OrdersService {
     } catch (error) {
       console.log(error)
       throw new NotFoundException(`Order with ID ${id} not found.`);
+    }
+  }
+
+  async updateOrderDetails(id: number, updateOrderDetailsDto: UpdateOrderDetailsDto): Promise<orderDetails> {
+    try {
+      return await this.db.orderDetails.update({
+        where: { id },
+        data: updateOrderDetailsDto,
+        include: {
+          order: true,
+          product: true,
+        },
+      });
+    } catch (error) {
+      throw new NotFoundException(`OrderDetails with ID ${id} not found.`);
+    }
+  }
+
+  async updateProvider(id: number, updateProviderDto: UpdateProviderDto): Promise<provider> {
+    try {
+      return await this.db.provider.update({
+        where: { id },
+        data: updateProviderDto,
+      });
+    } catch (error) {
+      throw new NotFoundException(`Provider with ID ${id} not found.`);
     }
   }
 
