@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDeliveryDto, CreateDeliveryDetailsDto } from './dto/create-delivery.dto';
-import { UpdateDeliveryDto } from './dto/update-delivery.dto';
+import { UpdateDeliveryDetailsDto, UpdateDeliveryDto } from './dto/update-delivery.dto';
 import { delivery, deliveryDetails } from '@prisma/client';
 import { User } from 'src/users/entity/User.entity';
 
@@ -110,6 +110,40 @@ export class DeliveriesService {
     }
   }
 
+  async updateDetails(id: number, updateDeliveryDto: UpdateDeliveryDetailsDto): Promise<deliveryDetails> {
+    try {
+      return await this.db.deliveryDetails.update({
+        where: { id },
+        data: {
+          price: updateDeliveryDto.price,
+          shippingCost: updateDeliveryDto.shippingCost,
+          OrderQuantity: updateDeliveryDto.OrderQuantity,
+          ExpectedDate: updateDeliveryDto.ExpectedDate
+            ? new Date(updateDeliveryDto.ExpectedDate)
+            : undefined,
+          delivery: updateDeliveryDto.deliveryId
+            ? { connect: { id: updateDeliveryDto.deliveryId } }
+            : undefined,
+          product: updateDeliveryDto.productId
+            ? { connect: { id: updateDeliveryDto.productId } }
+            : undefined,
+          warehouse: updateDeliveryDto.warehouseId
+            ? { connect: { id: updateDeliveryDto.warehouseId } }
+            : undefined,
+          address: updateDeliveryDto.addressId
+            ? { connect: { id: updateDeliveryDto.addressId } }
+            : undefined,
+        },
+        include: {
+          delivery: true,
+          product: true,
+        },
+      });
+    } catch (error) {
+      throw new NotFoundException(`Delivery with ID ${id} not found.`);
+    }
+  }
+
   /**
    * Deletes a delivery by its ID.
    * @param id - The ID of the delivery.
@@ -118,13 +152,15 @@ export class DeliveriesService {
    */
   async remove(id: number): Promise<delivery> {
     try {
+      await this.db.deliveryDetails.deleteMany({
+        where: { deliveryId: id },
+      });
+  
       return await this.db.delivery.delete({
         where: { id },
-        include: {
-          deliveryDetails: true,
-        },
       });
     } catch (error) {
+      console.log(error);
       throw new NotFoundException(`Delivery with ID ${id} not found.`);
     }
   }

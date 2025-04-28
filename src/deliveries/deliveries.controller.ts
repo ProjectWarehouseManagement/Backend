@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { DeliveriesService } from './deliveries.service';
 import { CreateDeliveryDto, CreateDeliveryDetailsDto } from './dto/create-delivery.dto';
-import { UpdateDeliveryDto } from './dto/update-delivery.dto';
+import { UpdateDeliveryDetailsDto, UpdateDeliveryDto } from './dto/update-delivery.dto';
 import { Roles } from 'src/auth/roles.decorator';
 import { Role } from '@prisma/client';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -69,6 +69,13 @@ export class DeliveriesController {
   @UseGuards(AuthGuard, RolesGuard)
   update(@Param('id') id: string, @Body() updateDeliveryDto: UpdateDeliveryDto) {
     return this.deliveriesService.update(+id, updateDeliveryDto);
+  }
+
+  @Patch('details/:id')
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(AuthGuard, RolesGuard)
+  updateDetails(@Param('id') id: string, @Body() updateDeliveryDto: UpdateDeliveryDetailsDto) {
+    return this.deliveriesService.updateDetails(+id, updateDeliveryDto);
   }
 
   /**
