@@ -75,9 +75,6 @@ model delivery {
   id              Int       @id   @default(autoincrement())
   orderDate       DateTime
 
-  userId      Int
-  user        user @relation(fields: [userId], references: [id])
-
   deliveryDetails deliveryDetails[]
 }
 
@@ -155,7 +152,6 @@ model user {
   updatedAt DateTime @updatedAt
 
   address address[]
-  delivery delivery[]
   warehouseOnAdmin warehouseOnAdmin[]
 }
 

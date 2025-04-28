@@ -15,12 +15,11 @@ export class DeliveriesService {
    * @returns The created delivery.
    */
   async createDelivery(createDeliveryDto: CreateDeliveryDto): Promise<delivery> {
-    const { deliveryDate, userId } = createDeliveryDto;
+    const { deliveryDate } = createDeliveryDto;
 
     const delivery =  this.db.delivery.create({
       data: {
         orderDate: new Date(deliveryDate),
-        user: { connect: { id: userId } },
       }
     });
     return delivery;
@@ -57,7 +56,6 @@ export class DeliveriesService {
   async findAll(): Promise<delivery[]> {
     return this.db.delivery.findMany({
       include: {
-        user: true,
         deliveryDetails: true,
       },
     });
@@ -96,9 +94,6 @@ export class DeliveriesService {
         data: {
           orderDate: updateDeliveryDto.deliveryDate
             ? new Date(updateDeliveryDto.deliveryDate)
-            : undefined,
-          user: updateDeliveryDto.userId
-            ? { connect: { id: updateDeliveryDto.userId } }
             : undefined,
         },
         include: {

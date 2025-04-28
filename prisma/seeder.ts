@@ -145,7 +145,6 @@ async function main() {
     const delivery = await prisma.delivery.create({
       data: {
         orderDate: faker.date.past(),
-        userId: faker.helpers.arrayElement(users).id,
       },
     });
     deliveries.push(delivery);

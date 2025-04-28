@@ -73,12 +73,4 @@ export class CreateDeliveryDto {
   })
   @IsDateString()
   deliveryDate: string | Date;
-
-  @ApiProperty({
-    description: 'ID of the user associated with the delivery',
-    example: 1,
-  })
-  @IsNumber()
-  @IsPositive()
-  userId: number;
 }

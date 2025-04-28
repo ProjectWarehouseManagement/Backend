@@ -49,6 +49,9 @@ export class InventoriesService {
         warehouse: {
           id
         }
+      },
+      include: {
+        product: true,
       }
     });
   }
