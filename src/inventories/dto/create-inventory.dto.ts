@@ -1,8 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Prisma } from "@prisma/client";
 import { IsBoolean, IsNumber, Min } from "class-validator";
-import { Product } from "src/products/entities/product.entity";
-import { Warehouse } from "src/warehouses/entities/warehouse.entity";
 
 export class CreateInventoryDto implements Omit<Prisma.inventoryCreateInput, 'product' | 'warehouse'> {
     @ApiProperty({

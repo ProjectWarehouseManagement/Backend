@@ -68,6 +68,11 @@ export class UsersController {
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update user' })
+  @ApiResponse({ status: 200, description: 'User updated successfully', type: User })
+  @ApiResponse({ status: 400, description: 'Invalid input' })
+  @ApiParam({ name: 'id', required: true, description: 'User ID' })
+  @ApiBody({ type: UpdateUserDto })
   async addAddress(@Param('id') id: string, @Body() createAddressDto: CreateAddressDto): Promise<address> {
     return this.addressesService.createWithUser(createAddressDto, +id);
   }

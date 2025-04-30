@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Prisma } from "@prisma/client";
-import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsString, Min } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsString, Min } from "class-validator";
 
 export class CreateProductDto implements Prisma.productCreateInput{
     @ApiProperty({

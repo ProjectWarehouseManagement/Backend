@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { ApiBody, ApiHeader, ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiHeader, ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Response, Request } from 'express';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Roles } from './roles.decorator';
@@ -37,6 +37,9 @@ export class AuthController {
   }
 
   @Post('logout')
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'User logout' })
   @ApiResponse({ status: 200, description: 'Logged out successfully', type: Object })
   @ApiUnauthorizedResponse({ description: 'No access token' })
@@ -45,8 +48,6 @@ export class AuthController {
     name: 'Cookie',
     description: 'Must include access_token and refresh_token cookies',
   })
-  @Roles(Role.ADMIN, Role.USER)
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async logout(@Res() res: Response) {
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
@@ -56,6 +57,7 @@ export class AuthController {
   @Post('refresh')
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(AuthGuard, RolesGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Refresh access token using refresh token cookie' })
   @ApiResponse({ status: 200, description: 'Token refreshed successfully' })
   @ApiResponse({ status: 401, description: 'Invalid refresh token' })
@@ -86,6 +88,16 @@ export class AuthController {
   }
 
   @Post('check')
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(AuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: 'Access token is valid' })
+  @ApiResponse({ status: 401, description: 'Invalid access token' })
+  @ApiUnauthorizedResponse({ description: 'No access token' })
+  @ApiHeader({
+    name: 'Cookie',
+    description: 'Must include access_token cookie',
+  })
   async check(@Req() req: Request, @Res() res: Response) {
     const access_token = req.cookies?.access_token;
     if (!access_token) {

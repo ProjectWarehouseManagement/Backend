@@ -38,11 +38,7 @@ export class AuthGuard implements CanActivate {
     if (request.cookies?.access_token) {
       return request.cookies.access_token;
     }
-    
-    // if (request.cookies?.refresh_token) {
-    //   return request.cookies.refresh_token;
-    // }
-    
+
     return undefined;
   }
 }

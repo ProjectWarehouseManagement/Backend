@@ -14,6 +14,7 @@ import { AddressesService } from 'src/addresses/addresses.service';
 import { InventoriesService } from 'src/inventories/inventories.service';
 import { CreateInventoryDto } from 'src/inventories/dto/create-inventory.dto';
 import { UpdateInventoryDto } from 'src/inventories/dto/update-inventory.dto';
+import { Inventory } from 'src/inventories/entities/inventory.entity';
 
 @Controller('warehouses')
 export class WarehousesController {
@@ -45,6 +46,12 @@ export class WarehousesController {
   @Post("/inventories/:id/product/:prodId")
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(AuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Add a product to inventory', description: 'Adds a product to the inventory of a warehouse.' })
+  @ApiParam({ name: 'id', description: 'Warehouse ID', type: 'string' })
+  @ApiParam({ name: 'prodId', description: 'Product ID', type: 'string' })
+  @ApiResponse({ status: 201, description: 'Product added to inventory successfully.', type: Inventory })
+  @ApiUnauthorizedResponse({ description: 'No access token provided.' })
   async addProductToInventory(@Param('id') id: string, @Param('prodId') prodId: string, @Body() createInventoryDto: CreateInventoryDto) : Promise<inventory> {
    return this.inventoriesService.create(createInventoryDto, +id, +prodId);
   }
@@ -67,6 +74,11 @@ export class WarehousesController {
   @Get(':id/inventories')
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(AuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Retrieve all inventories of a warehouse', description: 'Fetches all inventories for a specific warehouse.' })
+  @ApiParam({ name: 'id', description: 'Warehouse ID', type: 'string' })
+  @ApiResponse({ status: 200, description: 'List of inventories retrieved successfully.', type: Array<inventory> })
+  @ApiUnauthorizedResponse({ description: 'No access token provided.' })
   async findAllInventories(@Param('id') id: string): Promise<inventory[]> {
     return this.inventoriesService.findAll(+id);
   }
@@ -74,6 +86,12 @@ export class WarehousesController {
   @Get(':warehouseId/inventories/:inventoryId')
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(AuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Retrieve a specific inventory', description: 'Fetches a specific inventory by its ID for a warehouse.' })
+  @ApiParam({ name: 'warehouseId', description: 'Warehouse ID', type: 'string' })
+  @ApiParam({ name: 'inventoryId', description: 'Inventory ID', type: 'string' })
+  @ApiResponse({ status: 200, description: 'Inventory retrieved successfully.', type: Inventory })
+  @ApiUnauthorizedResponse({ description: 'No access token provided.' })
   async findOneInventory(@Param('warehouseId') id: string, @Param('inventoryId') invId: string): Promise<inventory> {
     return this.inventoriesService.findOne(+id, +invId);
   }
@@ -116,6 +134,18 @@ export class WarehousesController {
   @Patch('/inventories/:id')
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(AuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ description: 'Update an inventory' })
+  @ApiResponse({ status: 200, description: 'Inventory updated successfully', type: Inventory })
+  @ApiResponse({ status: 400, description: 'Invalid input' })
+  @ApiResponse({ status: 404, description: 'Inventory not found' })
+  @ApiParam({ name: 'id', required: true, description: 'Inventory id' })
+  @ApiParam({ name: 'updateInventoryDto', required: true, description: 'Inventory data', type: UpdateInventoryDto })
+  @ApiUnauthorizedResponse({ description: 'No access token' })
+  @ApiHeader({
+    name: 'Cookie',
+    description: 'Must include access_token cookie',
+  })
   async updateInventory(@Param('id') id: string, @Body() updateInventoryDto: UpdateInventoryDto): Promise<inventory> {
     return this.inventoriesService.update(+id, updateInventoryDto);
   }
@@ -158,6 +188,16 @@ export class WarehousesController {
   @Delete('/inventories/:id')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ description: 'Remove an inventory' })
+  @ApiResponse({ status: 200, description: 'Inventory removed successfully', type: Inventory })
+  @ApiResponse({ status: 404, description: 'Inventory not found' })
+  @ApiParam({ name: 'id', required: true, description: 'Inventory id' })
+  @ApiUnauthorizedResponse({ description: 'No access token' })
+  @ApiHeader({
+    name: 'Cookie',
+    description: 'Must include access_token cookie',
+  })
   async removeInventory(@Param('id') id: string): Promise<inventory> {
     return this.inventoriesService.remove(+id);
   }
