@@ -1,10 +1,11 @@
 {
-  "name": "nestjs-keret-2024",
-  "version": "0.0.1",
+  "name": "warehouse-backend",
+  "version": "1.0.0",
   "description": "",
-  "author": "",
+  "author": "Juhasz Istvan Gyula, Deme Tamas",
   "private": true,
   "license": "UNLICENSED",
+  "bin": "dist/main.js",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -19,6 +20,17 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed": "ts-node prisma/seeder.ts"
+  },
+  "pkg": {
+    "scripts": "dist/**/*.js",
+    "assets": [
+      "node_modules/**/*",
+      ".env",
+      "**/*.json"
+    ],
+    "targets": [
+      "node16-win-x64"
+    ]
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
